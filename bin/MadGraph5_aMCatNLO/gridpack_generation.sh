@@ -249,7 +249,7 @@ make_gridpack () {
           #get needed BSM model
           if [[ $model = *[!\ ]* ]]; then
             echo "Loading extra model $model"
-            wget --no-check-certificate https://cms-project-generators.web.cern.ch/cms-project-generators/$model	
+            cp /work/missiroli_m/test/xpluscharm/CMSSW_10_6_18/src/XPlusCharmAnalysis/HPlusCharm/test/MadGraph5_aMCatNLO/${model} $model	
             cd models
             if [[ $model == *".zip"* ]]; then
               unzip ../$model
@@ -305,12 +305,12 @@ make_gridpack () {
 	  cp -r $PRODHOME/PLUGIN/MadSTR $MGBASEDIRORIG/PLUGIN/ # copy plugin 
           ./$MGBASEDIRORIG/bin/mg5_aMC --mode=MadSTR ${name}_proc_card.dat # run invoking MadSTR plugin
       fi
-	
-      is5FlavorScheme=0
-      if tail -n 20 $LOGFILE | grep -q -e "^p *=.*b\~.*b" -e "^p *=.*b.*b\~"; then 
-        is5FlavorScheme=1
+
+      nFlavorScheme=3
+      if   tail -n 20 $LOGFILE | grep -q -e "^p *=.*b\~.*b" -e "^p *=.*b.*b\~"; then nFlavorScheme=5
+      elif tail -n 20 $LOGFILE | grep -q -e "^p *=.*c\~.*c" -e "^p *=.*c.*c\~"; then nFlavorScheme=4
       fi
-    
+
        #*FIXME* workaround for broken set cluster_queue and run_mode handling
        if [ "$queue" != "condor" ]; then
          echo "cluster_queue = $queue" >> ./$MGBASEDIRORIG/input/mg5_configuration.txt
@@ -344,15 +344,14 @@ make_gridpack () {
     elif [ "${jobstep}" = "INTEGRATE" ] || [ "${jobstep}" = "ALL" ]; then  
       echo "Reusing existing directory assuming generated code already exists"
       echo "WARNING: If you changed the process card you need to clean the folder and run from scratch"
-    
-      if [ "$is5FlavorScheme" -eq -1 ]; then
-        if cat $LOGFILE_NAME*.log | grep -q -e "^p *=.*b\~.*b" -e "^p *=.*b.*b\~"; then 
-            is5FlavorScheme=1
-        else
-            is5FlavorScheme=0
-        fi 
+
+      if [ "${nFlavorScheme}" -eq -1 ]; then
+        nFlavorScheme=3
+        if   cat $LOGFILE_NAME*.log | grep -q -e "^p *=.*b\~.*b" -e "^p *=.*b.*b\~"; then nFlavorScheme=5
+        elif cat $LOGFILE_NAME*.log | grep -q -e "^p *=.*c\~.*c" -e "^p *=.*c.*c\~"; then nFlavorScheme=4
+        fi
       fi
-      
+
       cd $GEN_FOLDER
       
       if [ ! -d ${WORKDIR} ]; then
@@ -437,7 +436,7 @@ make_gridpack () {
       fi
     fi
     
-    prepare_run_card $name $CARDSDIR $is5FlavorScheme $script_dir $isnlo
+    prepare_run_card $name $CARDSDIR $nFlavorScheme $script_dir $isnlo
     
     #copy provided custom fks params or cuts
     if [ -e $CARDSDIR/${name}_cuts.f ]; then
@@ -606,19 +605,15 @@ make_gridpack () {
     
     sed -i s/SCRAM_ARCH_VERSION_REPLACE/${scram_arch}/g runcmsgrid.sh
     sed -i s/CMSSW_VERSION_REPLACE/${cmssw_version}/g runcmsgrid.sh
-    
-    pdfExtraArgs=""
-    if [ $is5FlavorScheme -eq 1 ]; then
-      pdfExtraArgs+="--is5FlavorScheme "
-    fi 
-    
+
+    pdfExtraArgs="--FlavorScheme ${nFlavorScheme}"
+
     pdfSysArgs=$(python ${script_dir}/getMG5_aMC_PDFInputs.py -f systematics -c 2017 $pdfExtraArgs)
     sed -i s/PDF_SETS_REPLACE/${pdfSysArgs}/g runcmsgrid.sh
-    
-    
+
     #clean unneeded files for generation
     ${helpers_dir}/cleangridmore.sh
-    
+
     #
     #Plan to decay events from external tarball?
     # 
@@ -772,7 +767,7 @@ GEN_FOLDER=${RUNHOME}/${name}
 
 WORKDIR=$GEN_FOLDER/${name}_gridpack/work/
 
-is5FlavorScheme=-1
+nFlavorScheme=-1
 if [ -z ${iscmsconnect:+x} ]; then iscmsconnect=0; fi
 
 if [ "${name}" != "interactive" ]; then

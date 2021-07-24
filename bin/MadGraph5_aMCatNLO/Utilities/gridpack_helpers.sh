@@ -1,13 +1,10 @@
 set_run_card_pdf () {
     name=$1
     CARDSDIR=$2
-    is5FlavorScheme=$3
+    nFlavorScheme=$3
     script_dir=$4
 
-    pdfExtraArgs=""
-    if [ $is5FlavorScheme -eq 1 ]; then
-        pdfExtraArgs+="--is5FlavorScheme "
-    fi
+    pdfExtraArgs="--FlavorScheme ${nFlavorScheme}"
 
     if grep -q -e "\$DEFAULT_PDF_SETS" $CARDSDIR/${name}_run_card.dat; then
         local central_set=$(python ${script_dir}/getMG5_aMC_PDFInputs.py -f "central" -c 2017 $pdfExtraArgs)
@@ -39,22 +36,17 @@ EOF
 
 # Make some replacements in run card (mostly related to PDF)
 # and copy to correct directory
-# Args: <process_name> <cards directory> <is5FlavorScheme> 
+# Args: <process_name> <cards directory> <nFlavorScheme> <script directory> <isNLO>
 prepare_run_card () {
     name=$1
     CARDSDIR=$2
-    is5FlavorScheme=$3
+    nFlavorScheme=$3
     script_dir=$4
     isnlo=$5
 
-    set_run_card_pdf $name $CARDSDIR $is5FlavorScheme $script_dir
+    set_run_card_pdf $name $CARDSDIR $nFlavorScheme $script_dir
 
     # Set maxjetflavor according to PDF scheme
-    nFlavorScheme=5
-    if [ $is5FlavorScheme -ne 1 ]; then
-        nFlavorScheme=4
-    fi
-
     if grep -Fxq "maxjetflavor" ./Cards/run_card.dat ; then
         sed -i "s/.*maxjetflavor.*/${nFlavorScheme}\ =\ maxjetflavor/" ./Cards/run_card.dat 
     else

@@ -7,12 +7,17 @@ class PDFSetHelper(object):
         if self.pdflist_file:
             self.readPDFsFromFile()
 
-    def readDefaultPDFsFile(self, is5FlavorScheme):
-        base_dir = os.path.dirname(os.path.realpath(__file__)) 
-        meta_data_dir = base_dir.replace("Utilities/scripts", "MetaData") 
+    def readDefaultPDFsFile(self, nFlavorScheme):
+        base_dir = os.path.dirname(os.path.realpath(__file__))
+        meta_data_dir = base_dir.replace("Utilities/scripts", "MetaData")
 
-        self.pdflist_file = meta_data_dir + "/" + ("pdflist_5f_2017.dat" \
-            if is5FlavorScheme else "pdflist_4f_2017.dat")
+        self.pdflist_file = meta_data_dir + "/"
+        if   nFlavorScheme == 3: self.pdflist_file += 'pdflist_3f_2017.dat'
+        elif nFlavorScheme == 4: self.pdflist_file += 'pdflist_4f_2017.dat'
+        elif nFlavorScheme == 5: self.pdflist_file += 'pdflist_5f_2017.dat'
+        else:
+            raise RuntimeError('readDefaultPDFsFile -- invalid value for argument "nFlavorScheme": '+nFlavorScheme)
+
         self.readPDFsFromFile()
 
     def readPDFsFromFile(self):
