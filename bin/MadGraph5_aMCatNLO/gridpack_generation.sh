@@ -606,7 +606,7 @@ make_gridpack () {
     sed -i s/SCRAM_ARCH_VERSION_REPLACE/${scram_arch}/g runcmsgrid.sh
     sed -i s/CMSSW_VERSION_REPLACE/${cmssw_version}/g runcmsgrid.sh
 
-    pdfExtraArgs="--FlavorScheme ${nFlavorScheme}"
+    pdfExtraArgs="--nFlavorScheme ${nFlavorScheme}"
 
     pdfSysArgs=$(python ${script_dir}/getMG5_aMC_PDFInputs.py -f systematics -c 2017 $pdfExtraArgs)
     sed -i s/PDF_SETS_REPLACE/${pdfSysArgs}/g runcmsgrid.sh

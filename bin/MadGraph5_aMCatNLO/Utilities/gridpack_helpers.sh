@@ -4,7 +4,7 @@ set_run_card_pdf () {
     nFlavorScheme=$3
     script_dir=$4
 
-    pdfExtraArgs="--FlavorScheme ${nFlavorScheme}"
+    pdfExtraArgs="--nFlavorScheme ${nFlavorScheme}"
 
     if grep -q -e "\$DEFAULT_PDF_SETS" $CARDSDIR/${name}_run_card.dat; then
         local central_set=$(python ${script_dir}/getMG5_aMC_PDFInputs.py -f "central" -c 2017 $pdfExtraArgs)
