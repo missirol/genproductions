@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 helper = PDFSetHelper_MG5_aMC()
 if args.pdf_choice == '2017':
-    helper.readDefaultPDFsFile(args.FlavorScheme)
+    helper.readDefaultPDFsFile(args.nFlavorScheme)
 else:
     #TODO Implement option for custom PDF list
     print "Custom sets not yet supported!"
