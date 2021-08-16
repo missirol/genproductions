@@ -249,7 +249,7 @@ make_gridpack () {
           #get needed BSM model
           if [[ $model = *[!\ ]* ]]; then
             echo "Loading extra model $model"
-            cp /work/missiroli_m/test/xpluscharm/CMSSW_10_6_18/src/XPlusCharmAnalysis/HPlusCharm/test/MadGraph5_aMCatNLO/${model} $model	
+            wget --no-check-certificate https://cms-project-generators.web.cern.ch/cms-project-generators/$model
             cd models
             if [[ $model == *".zip"* ]]; then
               unzip ../$model
