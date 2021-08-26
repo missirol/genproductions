@@ -134,7 +134,8 @@ if [ ! -e $LHEWORKDIR/header_for_madspin.txt ]; then
     pdfsets="PDF_SETS_REPLACE"
     scalevars="--mur=1,2,0.5 --muf=1,2,0.5 --together=muf,mur --dyn=-1"
 
-    echo "systematics $runlabel --start_id=1001 --pdf=$pdfsets $scalevars" | ./bin/aMCatNLO
+    echo "SAMPLE-SPECIFIC CHANGE to runcmsgrid_NLO.sh --> Skipping execution of \"./bin/aMCatNLO systematics ..\""
+#    echo "systematics $runlabel --start_id=1001 --pdf=$pdfsets $scalevars" | ./bin/aMCatNLO
 
     cp $LHEWORKDIR/process/Events/${runlabel}/events.lhe $LHEWORKDIR/${runname}_final.lhe
 

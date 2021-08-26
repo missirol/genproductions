@@ -54,9 +54,10 @@ prepare_run_card () {
     fi
 
     if [ "$isnlo" -gt "0" ]; then # nlo mode
-	echo "False = reweight_scale" >> ./Cards/run_card.dat 
-	echo "False = reweight_PDF" >> ./Cards/run_card.dat 
-	echo "True = store_rwgt_info" >> ./Cards/run_card.dat 
+       echo "SAMPLE-SPECIFIC CHANGE to gridpack_helpers.sh --> Skipping manual additions to ./Cards/run_card.dat"
+#	echo "False = reweight_scale" >> ./Cards/run_card.dat 
+#	echo "False = reweight_PDF" >> ./Cards/run_card.dat 
+#	echo "True = store_rwgt_info" >> ./Cards/run_card.dat 
     else # lo mode 
 	echo "None = systematics_program" >> ./Cards/run_card.dat 
 	echo "True = use_syst" >> ./Cards/run_card.dat 
